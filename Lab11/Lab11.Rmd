@@ -1,0 +1,336 @@
+---
+title: "Lab11"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: spacelab
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+## GetWD
+
+```{r}
+getwd()
+```
+
+# Task 2
+
+## CI's using R as a calculator
+
+```{r}
+d=c(5.0581, 4.9707, 5.0893, 4.9334, 4.9777, 5.0285, 4.8555, 4.9565, 
+4.9769, 4.9722, 4.999, 4.9925, 4.9686, 5.0662, 4.9239, 4.9781, 
+5.0485, 5.0014, 4.9957, 5.0195, 5.0118, 4.9928, 5.0361, 5.0185, 
+4.9879)
+mp = c(-1,1)
+t=qt(0.975,24)
+
+
+
+
+ci95 = mean(d) + mp*qt(0.975,24)*sd(d)/sqrt(25) 
+
+ci90 = mean(d) + mp*qt(0.95,24)*sd(d)/sqrt(25) 
+
+ci80 = mean(d) + mp*qt(0.9,24)*sd(d)/sqrt(25) 
+
+ci50 = mean(d) + mp*qt(0.75,24)*sd(d)/sqrt(25)
+```
+
+### 95%
+
+```{r}
+ci95
+```
+
+
+### 90%
+
+```{r}
+ci90
+```
+
+### 80%
+
+```{r}
+ci80
+```
+
+### 50%
+
+```{r}
+ci50
+```
+
+### t.test
+
+```{r}
+obj=t.test(d,conf.level=0.80)
+
+obj$conf.int
+```
+
+
+### 95% ci for $\sigma^2$
+
+```{r}
+xsq1_95=qchisq(0.975,29)
+xsq2_95=qchisq(0.025,29) 
+
+ci=c()
+ci[1]=29*var(d)/xsq1_95
+ci[2]=29*var(d)/xsq2_95
+ci
+```
+
+
+### 90% ci for $\sigma^2$
+
+```{r}
+xsq1_90=qchisq(0.95,29) 
+xsq2_90=qchisq(0.05,29) 
+
+ci=c()
+ci[1]=29*var(d)/xsq1_90
+ci[2]=29*var(d)/xsq2_90
+ci
+```
+
+
+### 80% ci for $\sigma^2$
+
+```{r}
+xsq1_80=qchisq(0.9,29) 
+xsq2_80=qchisq(0.1,29) 
+
+ci=c()
+ci[1]=29*var(d)/xsq1_80
+ci[2]=29*var(d)/xsq2_80
+ci
+```
+
+
+### 50% ci for $\sigma^2$
+
+```{r}
+xsq1_50=qchisq(0.75,29) 
+xsq2_50=qchisq(0.25,29) 
+
+ci=c()
+ci[1]=29*var(d)/xsq1_50
+ci[2]=29*var(d)/xsq2_50
+ci
+```
+
+
+
+# Task 3
+
+```{r}
+blue=c(21.65, 17.48, 20.1, 21.57, 14.82, 19.17, 21.08, 18.23, 22.93, 
+15.66, 20.89, 21.66, 18.5, 20.59, 18.63, 18.91, 19.53, 17.7, 
+16.5, 19.03)
+
+snapper=c(31.65, 27.48, 30.1, 31.57, 24.82, 29.17, 31.08, 28.23, 32.93, 
+25.66, 30.89, 31.66, 28.5, 30.59, 28.63)
+```
+
+## 95% ci using R calc
+
+```{r}
+n1=length(snapper)
+n2=length(blue)
+spsq=((n1-1)*var(snapper)+(n2-1)*var(blue))/(n1+n2-2)
+t=qt(0.975,n1+n2-2)
+ci=c()
+ci[1]=mean(snapper)-mean(blue)-t*sqrt(spsq*(1/n1+1/n2)) 
+ci[2]=mean(snapper)-mean(blue)+t*sqrt(spsq*(1/n1+1/n2))
+ci
+```
+
+The mean difference will fall into the above interval with 95% confidence.
+
+### 95% $\mu_{snapper} - \mu_{blue}$
+
+```{r}
+t.test(snapper,blue,conf.level=0.95,var.equal=TRUE)$conf.int
+```
+
+
+### 90% $\mu_{snapper} - \mu_{blue}$
+
+```{r}
+t.test(snapper,blue,conf.level=0.90,var.equal=TRUE)$conf.int
+```
+
+
+### 80% $\mu_{snapper} - \mu_{blue}$
+
+```{r}
+t.test(snapper,blue,conf.level=0.80,var.equal=TRUE)$conf.int
+```
+
+
+### 50% $\mu_{snapper} - \mu_{blue}$
+
+```{r}
+t.test(snapper,blue,conf.level=0.50,var.equal=TRUE)$conf.int
+```
+
+As the confidence level decreases, so does the interval.
+
+# Task 4
+
+```{r}
+Exam1=c(40.98, 59.36, 46.69, 41.8, 61.63, 65.31, 62.96, 60.21, 56.89, 
+78.41, 53.44, 75.2, 60.54, 52.43, 41.41, 70.79, 73.55, 55.65, 
+61.43, 63.84, 58.07, 53.79, 54.45, 67.18, 44.46)
+
+Exam2=c(50.22, 66.19, 58.75, 51.88, 66.61, 70.86, 74.25, 70.23, 69.55, 
+87.18, 63.62, 81.7, 70.5, 66.02, 51.35, 80.92, 85.65, 65.44, 
+74.37, 75.28, 67.86, 59.92, 64.42, 73.57, 57.15)
+```
+
+
+## 95% ci for $\mu_d = \mu_1-\mu_2$
+
+```{r}
+alpha = .05
+n = length(Exam1)
+dbar = mean(Exam1 - Exam2)
+t = qt(1- alpha / 2, n -1)
+sd = sd(Exam1-Exam2)
+mp = c(-1,1)
+diff = dbar + mp * t *sd / sqrt(n)
+diff
+```
+
+The difference in means from Exam1 - Exam2 falls into the interval with 95% confidence
+
+### use t.test() for 90% ci for $u_d$
+
+```{r}
+t.test(Exam1, Exam2, paired = T, conf.level = .90)$conf.int
+```
+
+
+### use t.test() for 80% ci for $u_d$
+
+```{r}
+t.test(Exam1, Exam2, paired = T, conf.level = .80)$conf.int
+```
+
+
+### use t.test() for 70% ci for $u_d$
+
+```{r}
+t.test(Exam1, Exam2, paired = T, conf.level = .70)$conf.int
+```
+
+
+### use t.test() for 60% ci for $u_d$
+
+```{r}
+t.test(Exam1, Exam2, paired = T, conf.level = .60)$conf.int
+```
+
+
+### use t.test() for 10% ci for $u_d$
+
+```{r}
+t.test(Exam1, Exam2, paired = T, conf.level = .10)$conf.int
+```
+
+
+# Task 5
+
+```{r}
+birds <- read.csv("NZBIRDS.csv")
+
+addmargins(with(birds, table(Extinct, Flight)))
+```
+
+The data agrees with the given table.
+
+## 95% ci
+
+```{r}
+n1 = 38 
+n2 = 78 
+
+p1hat = 21 / n1 
+q1hat = 1 - p1hat
+p2hat = 7 / n2
+q2hat = 1 - p2hat
+
+mp = c(-1,1)
+ci <- (p1hat - p2hat) + mp * qnorm(1-.05/2,0,1)*sqrt((p1hat*q1hat/n1) + (p2hat*q2hat/n2))
+ci
+```
+
+# Task 6
+
+```{r}
+set.seed(35); sam1=rnorm(25,mean=10, sd=5)
+set.seed(45); sam2=rnorm(34, mean=40, sd=8)
+```
+
+## 95% CI for ratio
+
+```{r}
+a = .05
+s1 = sd(sam1)
+nu1 = length(sam1) - 1
+s2 = sd(sam2)
+nu2 = length(sam2) - 1
+fl = qf(1 - a/2,nu1,nu2)
+fr = qf(1-a/2,nu2, nu1)
+
+c(s1^2/s2^2/fl, s1^2/s2^2*fr)
+```
+
+### Use var.test for ci 80%
+
+```{r}
+var.test(sam1,sam2, conf.level = .80)$conf.int
+```
+
+### Use var.test for ci 70%
+
+```{r}
+var.test(sam1,sam2, conf.level = .70)$conf.int
+```
+
+### Use var.test for ci 60%
+
+```{r}
+var.test(sam1,sam2, conf.level = .60)$conf
+```
+
+### Use var.test for ci 50%
+
+```{r}
+var.test(sam1,sam2, conf.level = .50)$conf.int
+```
+
+# Task 7
+
+```{r}
+set.seed(23);x = rnorm(30,mean=10,sd=12)
+MATH4753TRISTAN2023::myci(x)
+```
+
+
+
+
+
+

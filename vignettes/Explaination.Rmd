@@ -1,0 +1,56 @@
+---
+title: "What the Package Does"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{What the Package Does}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(MATH4753TRISTAN2023)
+```
+
+# Explaination of Package
+
+This package includes many labs, assignments, and projects that are part of a course focused on applied statistics. It also contains many functions that are used in these labs, assignments, and functions.
+
+## mybin
+
+This is a function that allows the uses of the binomial model in a more specific way.
+
+
+
+## myfun
+
+This is a simple funiton that I had to make in order it show that I could make one.
+
+
+
+
+## myncurve
+
+This function shows the curve of the normal distribution.
+
+
+
+
+## myplot
+
+This function shows data points.
+
+
+
+## ntickets
+
+This function is for one of the projects about optimal ticket sales for an airline.
+
+
+

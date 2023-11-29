@@ -1,0 +1,100 @@
+---
+title: "Lab2"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+      toc: yes
+      toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task 1
+
+Working directory
+
+```{r}
+getwd()
+```
+
+## Task 2
+
+Read in the EPAGAS data
+
+```{r}
+EPAGAS <- read.csv(file = "EPAGAS.csv")
+head(EPAGAS)
+```
+
+
+## Task 3
+
+```{r}
+mpg <- EPAGAS$MPG
+
+z <- (mpg-mean(mpg))/sd(mpg)
+
+mean(z)
+
+sd(z)
+sd(z)^2
+
+
+mpg[abs(z) >= 2 & abs(z) <= 3]
+
+mpg[abs(z) > 3]
+```
+
+```{r}
+library(lattice)
+
+mycol <- ifelse(abs(z)>3, "Red",
+        ifelse(abs(z)>=2 &abs(z)<=3,"Blue", "Black"))  
+
+mypch <- ifelse(abs(z)>3, 20,
+        ifelse(abs(z)>=2 &abs(z)<=3,21, 22))
+
+dotplot(mpg,col=mycol)
+```
+
+
+
+
+
+## Task 4
+
+```{r}
+boxplot(mpg, col = "black", main = "MPG", horizontal = TRUE, notch = TRUE)
+```
+
+```{r}
+samp <- length(mpg)
+(samp * 3)/4
+```
+
+At least 3/4 of the data will fall within 2 standard deviations, so 75/100 will.
+
+
+```{r}
+cheb <- mpg[abs(z) <= 2]
+length(cheb)
+```
+
+Since 96 is more than 3/4 of 100, then the mpg data agrees with Chebychev's Theorem.
+
+The Empirical Rule states that roughly 95% of data should be within 2 standard deviations of the mean, so roughly 95/100. Since 96/100 do, the data set mpg corresponds with The Empirical Rule almost exactly.
+
+I would say that The Empirical Rule is very valid in this situation. It literally could not be closer to the exact value specified by the rule. Furthermore, we can check if 68% fall within 1 standard deviation, and if roughly all the data is within 3.
+
+```{r}
+cheb <- mpg[abs(z) <= 1]
+length(cheb)
+
+cheb <- mpg[abs(z) <= 3]
+length(cheb)
+```
+
+As you can see, the rule still holds to be incredibly accurate for this data set.

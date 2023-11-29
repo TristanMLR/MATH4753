@@ -1,0 +1,66 @@
+---
+title: "Project1"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: spacelab
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+# ntickets
+
+```{r}
+ntickets <- function(N, gamma, p) {
+  
+  ndisc <- c(N:(N+20)) # going trough N+20 points
+  discrete = (1-gamma)-pbinom(N,ndisc,p) # objective function
+  nd <- which.min(abs(discrete)) # finding the index of the 0
+  nd <- ndisc[nd] # finding the 0
+  ncont <- seq(N,N+20,length=100000) # going trough N+20 interval with 
+                                     # a lot of points
+  continuous <- (1-gamma) - pnorm(N+0.5,mean=ncont*p, # objective function
+                    sd=sqrt(ncont*p*(1-p)))
+  nc <- which.min(abs(continuous)) # finding the index of the 0
+  nc <- ncont[nc] # finding the 0
+  layout(matrix(1:2,nrow=2,ncol=2)) # proper layout
+  plot(ndisc,discrete,type='b',pch=21,bg="blue", # plotting the discrete
+       main=paste("Objective vs n to find optimal tickets sold\n",
+                  "(", nd, ")", "gamma=", gamma, ", N=", N,
+                  ", Discrete"),ylab="Objective",xlab="n")
+  abline(h=0,v=nd,lwd=2,col="red") # lines on the graph
+  plot(ncont,continuous,type='l',pch=21,bg="blue", # plotting the continuous
+       main=paste("Objective vs n to find optimal tickets sold\n",
+                  "(", nc, ")", "gamma=", gamma, ", N=", N,
+                  ", Continuous"),ylab="Objective",xlab="n",col="black")
+  abline(h=0,v=nc,lwd=2,col="blue") # lines on the graph
+  print(list(nd=nd,nc=nc,N=N,p=p,gamma=gamma)) # named list
+}
+
+ntickets(200,0.02,0.95)
+```
+
+```{r}
+ntickets(400,0.02,0.95)
+```
+
+```{r}
+MATH4753TRISTAN2023::ntickets(200,0.02,0.95)
+```
+
+
+
+
+
+
+
+

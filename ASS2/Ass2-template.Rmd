@@ -1,0 +1,419 @@
+---
+title: 'Ass 2'
+author: "Tristan LaRose"
+date: '`r format(Sys.Date(),format="%A, %B %d, %Y")`'
+output: 
+  html_document:
+    df_print: paged
+    fig_caption: true
+    highlights: pygments
+    number_sections: no
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE, fig.align='center'}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+# Questions{17/17}
+
+## Q 1
+
+### a
+
+$(expertfail|match) = 1 - 0.9212 = 0.0788$ 
+
+7.88%
+
+### b
+
+$(novicefail|match) = 1 - 0.7455 = 0.2545$
+
+25.45%
+
+### c
+
+Since the participant is randomly selected from 5 novices and 5 experts, the participant is equally likely to be a novice or an expert, regardless of outcome.
+
+
+## Q 2
+
+### a
+
+$(positive|user)=50/100=0.5$
+
+### b
+
+$(negative|non-user)=(900-9)/900=891/900=0.99$
+
+### c
+
+$(user|positive)=(P(positive|user)P(user))/(P(positive|user)P(user)+P(positive|non-user)P(non-user))$
+$=((0.5)(0.1))/((0.5)(0.1)+(0.01)(0.9))=0.8474576$
+
+
+
+
+## Q 3
+
+### Multiplicative Rule
+
+We want to form a sample of $k$ elements from $k$ sets, $n_1,...,n_k$, where there are $n_1$ elements in the first set, $n_2$ elements in the second set, ... , and $n_k$ elements in the $k$th set, with one element from each set. There are $n_1n_2n_3...n_k$ many different samples.
+
+If we were to see how many ways to arrange $a_1,a_2,...,a_k$ and $b_1,b_2,...,b_l$ elements (as a simplified example), we can see that $a_1$ can be arranged with every element from $b_1,b_2,...,b_l$, as can $a_2$ all the way to $a_k$. This means that there are k groups of l or l groups of k. This is the definition of multiplication, and $k*l-l*k$ from the commutative property of multiplication, therefore, there are $k*l$ ways to form these samples. More dimensions can be added in easily because we can take our group of $k*l$ and match each pair of a's and b's with m groups of c's to get $k*l*m$ samples, and so on.
+
+
+
+
+## Q 4
+
+### Permutation Rule
+
+$P^N_n = N(N-1)(N-2)...(N-n+1)=(N!)/[(N-n)!]$
+
+If we use the multiplicative rule, then there is a simple way to look at this rule. We know that there are N many ways to fill the first position because that is what we have defined it as. Since we are not replacing after we fill out first position, there are then N-1 ways to fill the second, N-2 to fill the third, and so on til we get to N-n+1 ways to fill the nth position which is where we are looking to stop. We then can apply the Multiplicative Rule to get:
+
+$(N)(N-1)(N-2)...(N-n+1)$
+
+which you will notice is the same as:
+
+$[(N)(N-1)(N-2)...(2)(1)]/[(N-n+1)(N-n)(N-n-1)...(3)(2)(1)]$
+
+because the bottom terms will cancel out tail-end of the top. You will also notice that the numerator and denominator are equal to:
+
+$[N!]/[(N-n+1)!]=P^N_n$
+
+
+
+## Q 5
+
+Partitions Rule
+
+$[N!]/[n_1!n_2!...n_k!]$ where $n_1+n_2+n_3+...+n_k=N$
+
+We can start by looking for $P^N_N$, from the previous theorem.
+
+$P^N_N=[N!]/[(N-N)!]=N!$
+
+We want to show that $A=[N!]/[n_1!n_2!...n_k!]$
+
+We can now use these facts to do some substitution:
+
+$P^N_N=[N!]=(A)[n_1!n_2!...n_k!]$
+
+this is true because A has the necessary terms to cancel out with the other terms to N!.
+
+We can now solve for A and get:
+
+$A=[N!]/[n_1!n_2!...n_k!]$
+
+
+
+## Q 6
+
+Combination Rule
+
+$(^N_n)=[N!]/[n!(N-n)!]$
+
+This is basically like taking N into two different groups of n and N-n, or in other words, into k=2 groups such that we can apply the partitions rule!
+
+Therefore, it follows that:
+
+$(^N_n)=[N!]/[n!(N-n)!]$
+
+because n + N-n = N, so we can apply the partitions rule.
+
+This is also why there is symmetry in the choose function.
+
+## Q 7
+
+### a
+
+$0.09+0.30+0.37+0.20+0.04=1.0$
+
+### b
+
+$P(3\cup4)=0.20+0.04=0.24$
+
+### c
+
+$P(y<2)=0.09+0.30=0.39$
+
+
+## Q 8
+
+### a 
+
+#### 1
+
+All $p(y)$ are such that $0\le p(y)\le1$.
+
+This is true from the table.
+
+#### 2
+
+The sum of all $p(y)=1$
+
+$(0.17+0.10+0.11+0.11+0.10+0.10+0.07+0.05+0.03+0.02+0.02+0.02+0.02+0.02+0.01+0.01+0.01+0.01+0.01+0.005+0.005)=1$
+
+### b
+
+$P(Y\ge10)=0.02+0.02+0.02+0.02+0.01+0.01+0.01+0.01+0.01+0.005+0.005=0.14$
+
+### c
+
+```{r}
+numapp <- c(0:20)
+probapp <- c(0.17,0.10,0.11,0.11,0.10,0.10,0.07,0.05,0.03,0.02,0.02,0.02,0.02,0.02,0.01,0.01,0.01,0.01,0.01,0.005,0.005)
+meanapp <- numapp*probapp
+mean <- sum(meanapp)
+mean
+```
+The mean of Y is 4.655 apps.
+
+```{r}
+disfrommean <- (numapp-mean)^2
+varianceapp <- (disfrommean*probapp)
+variance <- sum(varianceapp)
+variance
+
+sum((numapp-mean)^2*(probapp))
+```
+The variance of Y is 19.85597
+
+### d
+
+An example of an interval that has a probability of at least 0.75 is from 0 to to 6 apps.
+
+
+```{r}
+sum(c(0.17,0.10,0.11,0.11,0.10,0.10,0.07))
+```
+
+## Q 9
+
+### a
+
+```{r}
+dbinom(10,25,0.7)
+```
+
+### b
+
+```{r}
+pbinom(5,25,0.7)
+```
+
+### c
+
+$\mu=p=0.7$
+
+$\sigma^2=pq=(0.7)(0.3)=0.21$
+
+$\sigma=0.4582576$
+
+### d
+
+The mean of a binomial probability distribution is the probability of success, which was 70% in this case. The variance is the probability of success multiplied by the probability of failure, which is the also the square of the standard deviation, so we then take the square root of the variance.
+
+Thus the expected value is:
+```{r}
+0.7*(25)
+```
+
+
+
+## Q 10
+
+### a
+
+```{r}
+dmultinom(x=c(5,5,5,5,5,5,5,5,5,5), prob = c(0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1))
+```
+
+Roughly 0
+
+### b
+
+We can get this probability by calculating if there are no trains or 1 train.
+
+$P(y<2)=0.0338$
+
+
+
+
+## Q 11
+
+### a
+
+$P(Y=y)$ (0.40)(0.60)^(y-1) for $y=1,2,3,..$
+
+
+### b
+
+$E(Y)=1/p=2.5$
+
+
+### c
+
+$P(Y=1)=0.40
+
+```{r}
+(0.6)^(1-1)*(0.4)
+```
+
+
+### d
+
+$P(Y>2)=0.36$
+
+```{r}
+1-(0.4)*(0.6)^(0)-(0.4)*(0.6)^(1)
+```
+
+
+
+## Q 12
+
+### a
+
+```{r}
+(8/209)*10
+```
+The expected result of a random sample is 0.3827751, meaning we can expect less than one of the 10, or in other words, we should expect one to treat hazardous waste on-site.
+
+### b
+
+```{r}
+dhyper(4,8,201,10)
+```
+
+
+## Q 13
+
+```{r}
+1 - ppois(3,.5)
+```
+
+
+
+
+## Q 14
+
+### a
+
+$c=2/3$
+
+### b
+
+$F(y)=(4/3)y-(1/3)y^2$
+
+### c
+
+$F(.4)=0$
+
+### d
+
+```{r}
+((4/3)*(.6)-(1/3)*(.6)^2)-((4/3)*(.1)-(1/3)*(.1)^2)
+```
+
+
+
+
+## Q 15
+
+### a
+
+$\mu=0$ (minutes)
+
+$\sigma^2=5$ (minutes)
+
+### b
+
+$\mu=0$ (hours)
+
+$\sigma^2=5*60^2=18000$ (hours)
+
+### c
+
+$\mu=0$ (seconds)
+
+$\sigma^2=5*(1/60)^2=0.001388889$ (seconds)
+
+
+## Q 16
+
+### a
+
+```{r}
+1 - pnorm(45,mean=50,sd=3.2)
+```
+
+### b
+
+```{r}
+pnorm(55,mean=50,sd=3.2)
+```
+
+### c
+
+```{r}
+pnorm(52,mean=50,sd=3.2)-pnorm(51,mean=50,sd=3.2)
+```
+
+
+## Q 17
+
+
+```{r}
+crash <- read.csv(file = "CRASH.csv")
+```
+
+### a
+
+```{r}
+pnorm(700,mean=605,sd=185)-pnorm(500,mean=605,sd=185)
+```
+
+### b
+
+```{r}
+pnorm(500,mean=605,sd=185)-pnorm(400,mean=605,sd=185)
+```
+
+### c
+
+```{r}
+pnorm(850,mean=605,sd=185)
+```
+
+### d
+
+```{r}
+1-pnorm(1000,mean=605,sd=185)
+```
+
+### e
+
+```{r}
+1-pnorm(842,mean=605,sd=185)
+1-pnorm(843,mean=605,sd=185)
+```
+
+```{r}
+rrr <- c(50:1160)
+tenper <- pnorm(rrr,mean=605,sd=185)
+min(rrr[tenper >= .9])
+```
+Somewhere between 842 and 843. From the second chunk of code, it gives 843, so I will go with that being more accurate.
+
+
+
+
+

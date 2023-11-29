@@ -1,0 +1,245 @@
+---
+title: "Lab 1"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks 
+
+Lab 1 tasks
+
+## Task 1
+
+working directory
+
+```{r}
+getwd()
+```
+
+## Task 2
+
+Read in the DDT data
+
+
+```{r}
+ddt <- read.csv(file = "DDT.csv")
+head(ddt, 6)
+```
+
+## Task 3
+
+Quantitative and Qualitative Variables
+
+```{r}
+names(ddt)
+class(ddt)
+summary(ddt)
+```
+
+The qualitative variables are "RIVER," "SPECIES," and "MILE."
+
+The quantitative variables are "LENGTH," "WEIGHT," and "DDT."
+
+
+
+How many Species?
+
+```{r}
+table(ddt$SPECIES)
+```
+
+There are three species in the ddt data set.
+
+
+
+Largemouth Bass with weight greater than 800gms.
+
+```{r}
+ddt[ddt$SPECIES == "LMBASS" & ddt$WEIGHT > 800, ]
+```
+
+
+
+SCM River with DDT greater than 4.0.
+
+```{r}
+ddt[ddt$RIVER == "SCM" & ddt$DDT > 4.0, ]
+```
+
+## Clicker Questions
+
+Find the mean length of fish in the ddt data frame:
+
+```{r}
+mean(ddt$LENGTH)
+```
+
+
+
+What is the standard deviation of the weight of fish in the ddt data frame?
+
+```{r}
+sd(ddt$LENGTH)
+```
+
+
+
+Is this the plot of LENGTH vs WEIGHT from the ddt data frame?
+
+```{r}
+plot(ddt$WEIGHT, ddt$LENGTH)
+```
+
+0=No. The graph from the clicker question has its axes flipped, though, it is labelled correctly.
+
+
+
+If v=1:20 what is the last value of v/20?
+
+```{r}
+v = 1:20
+v
+v/20
+```
+
+1.00
+
+## Task 4
+
+Rivers
+
+```{r}
+riv <- table(ddt$RIVER)
+riv
+```
+
+```{r}
+barplot(riv, axes = TRUE, ylab = "NUMBER OF ENTRIES", xlab = "RIVER", col = c("red", "green", "blue", "orange"), main = "Number of Entries at Each River")
+```
+
+Rivers vs. Species of Fish
+
+```{r}
+rivf <- table(ddt$RIVER, ddt$SPECIES)
+rivf
+```
+
+```{r}
+barplot(rivf, axes = TRUE, 
+        ylab = "NUMBER OF FISH", 
+        xlab = "SPECIES",
+        col = c("red", "green", "blue", "orange"),
+        main = "River vs. Species"
+        )
+legend(1.5, 
+       90, 
+       legend = c("FCM", "LCM", "SCM", "TRM"), 
+        col = c("red", "green", "blue", "orange"), 
+        lty = 1:1,
+        cex = 0.8
+        )
+```
+
+
+## Task 5
+
+Pie chart of SPECIES
+
+```{r}
+sp <- with(ddt,table(SPECIES))
+sp
+pie(sp, col = 2:4, main = "SPECIES")
+```
+
+
+Pie Chart of RIVER
+
+```{r}
+ri <- with(ddt, table(RIVER))
+ri
+pie(ri, col = 2:5, main = "Fish by RIVER")
+```
+
+
+## Task 6
+
+A box plot for DDT
+
+```{r}
+boxplot(ddt$DDT, col = "red", ylab = "DDT", main = "DDT")
+```
+
+A boxplot for WEIGHT
+
+```{r}
+boxplot(ddt$WEIGHT, col = "red", ylab = "WEIGHT", main = "WEIGHT")
+```
+
+A boxplot for LENGTH
+
+```{r}
+boxplot(ddt$LENGTH, col = "red", ylab = "LENGTH", main = "LENGTH")
+```
+
+
+## Task 7
+
+Coplot of LENGTH Vs WEIGHT given RIVER
+
+```{r}
+fishcol <- with(ddt,ifelse(SPECIES=="CCATFISH","Red",
+                        ifelse(SPECIES=="SMBUFFALO","Blue","Green")))
+coplot(LENGTH~WEIGHT|RIVER,data=ddt,col=fishcol)
+```
+
+
+Coplot of DDT Vs WEIGHT given SPECIES
+
+```{r}
+fishcol <- with(ddt,ifelse(SPECIES=="CCATFISH","Red",
+                        ifelse(SPECIES=="SMBUFFALO","Blue","Green")))
+coplot(DDT~WEIGHT|SPECIES,data=ddt,col=fishcol)
+```
+
+
+## Task 8
+
+```{r}
+library(ggplot2)
+g <- ggplot(ddt, aes(x = SPECIES, y = WEIGHT, fill = RIVER))
+g <- g + geom_boxplot() + ggtitle("Tristan LaRose")
+g
+```
+
+
+```{r}
+library(ggplot2)
+g <- ggplot(ddt, aes(x = RIVER, y = LENGTH, fill = SPECIES))
+g <- g + geom_violin() + ggtitle("Tristan LaRose")
+g
+
+```
+
+
+
+
+
+```{r}
+library(ggplot2)
+
+g <- ggplot(ddt, aes(x = WEIGHT, y = LENGTH, col = SPECIES))
+g <- g + geom_point() + ggtitle("Tristan LaRose")
+g
+
+```
+
+
+

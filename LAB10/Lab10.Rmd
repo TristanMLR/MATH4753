@@ -1,0 +1,319 @@
+---
+title: "Lab10"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: spacelab
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+## Get WD
+
+```{r}
+getwd()
+```
+
+# Task 2
+
+## Mymaxlik()
+
+### A
+
+A matrix is created with the outer function. It applies the lfun function to x and param, which is all then put into z. Each row is the product of an x-value and all the params. Each column is a product of a value of param and all the x values.
+
+### B
+
+This line finds the index of the y that is the biggest. If there are more than one, it will take the last of them.
+
+### Maximum Likelihood
+
+#### Formula
+
+$P(y_1y_2y_3y_4y_5y_6y_7y_8)=p(y_1)×p(y_2)×p(y_3)×p(y_4)×p(y_5)×p(y_6)×p(y_7)×p(y_8)=∏^8_i=1(^{20}_{y_i})y_ip^{y_i}(1−p)^{20−y_i}$
+
+#### R-code
+
+$∏^8_{i=1}dbinom(y_i,size=20,prob=p)=dbinom(y_1,size=20,prob=p)×dbinom(y_2,size=20,prob=p)×dbinom(y_3,size=20,prob=p)×dbinom(y_4,size=20,prob=p)×dbinom(y_5,size=20,prob=p)×dbinom(y_6,size=20,prob=p)×dbinom(y_7,size=20,prob=p)×dbinom(y_8,size=20,prob=p)$
+
+#### Mamimum Likelihood for $y=3,3,4,3,4,5,5,4$
+
+```{r}
+mymaxlik=function(lfun,x,param,...){
+# how many param values are there?
+np=length(param)
+# outer -- notice the order, x then param
+# this produces a matrix – try outer(1:4,5:10,function(x,y) paste(x,y,sep=" "))   to understand
+z=outer(x,param,lfun) # A
+# z is a matrix where each x,param is replaced with the function evaluated at those values
+y=apply(z,2,sum)
+
+# y is a vector made up of the column sums
+# Each y is the log lik for a new parameter value
+plot(param,y,col="Blue",type="l",lwd=2,...)
+# which gives the index for the value of y >= max.
+# there could be a max between two values of the parameter, therefore 2 indices
+# the first max will take the larger indice
+i=max(which(y==max(y))) # B
+abline(v=param[i],lwd=2,col="Red")
+
+# plots a nice point where the max lik is
+points(param[i],y[i],pch=19,cex=1.5,col="Black")
+axis(3,param[i],round(param[i],2))
+#check slopes. If it is a max the slope should change sign from + to 
+# We should get three + and two -vs
+ifelse(i-3>=1 & i+2<=np, slope<-(y[(i-2):(i+2)]-y[(i-3):(i+1)])/(param[(i-2):(i+2)]-param[(i-3):(i+1)]),slope<-"NA")
+return(list(i=i,parami=param[i],yi=y[i],slope=slope))
+}
+logbin=function(x,param) log(dbinom(x,prob=param,size=20))
+mymaxlik(x=c(3,3,4,3,4,5,5,4),param=seq(0,1,length=1000),lfun=logbin,xlab=expression(pi),main="Binomial",cex.main=2)
+```
+
+The maximum likelihood is 0.19
+
+# Task 3
+
+## $y=4,6,7,6,5$
+
+```{r}
+logpoiss=function(x,param) log(dpois(x,lambda=param))
+mymaxlik(x=c(4,6,7,6,5),param=seq(0,10,length=1000),lfun=logpoiss,xlab=expression(lambda),main="Poisson",cex.main=2)
+```
+
+### Algebraic Expression
+
+$l(λ)=−5λ+∏^5_{i=1}Y_ilogλ−∏^5_{i=1}log(Y_i!)$
+
+### Maximum Likelihood
+
+$\hat\lambda =5.600000$
+
+## MyNRML
+
+```{r}
+myNRML=function(x0,delta=0.001,llik,xrange,parameter="param"){
+f=function(x) (llik(x+delta)-llik(x))/delta
+fdash=function(x) (f(x+delta)-f(x))/delta
+d=1000
+i=0
+x=c()
+y=c()
+x[1]=x0
+y[1]=f(x[1])
+while(d > delta & i<100){
+i=i+1
+x[i+1]=x[i]-f(x[i])/fdash(x[i])
+y[i+1]=f(x[i+1])
+d=abs(x[i+1]-x[i])
+}
+layout(matrix(1:2,nr=1,nc=2,byrow=TRUE),width=c(1,2))
+curve(llik(x), xlim=xrange,xlab=parameter,ylab="log Lik",main="Log Lik")
+curve(f(x),xlim=xrange,xaxt="n", xlab=parameter,ylab="derivative",main=  "Newton-Raphson Algorithm \n on the derivative")
+points(x,y,col="Red",pch=19,cex=1.5)
+axis(1,x,round(x,2),las=2)
+abline(h=0,col="Red")
+
+segments(x[1:(i-1)],y[1:(i-1)],x[2:i],rep(0,i-1),col="Blue",lwd=2)
+segments(x[2:i],rep(0,i-1),x[2:i],y[2:i],lwd=0.5,col="Green")
+
+list(x=x,y=y)
+}
+myNRML(x0=1,delta=0.000001,llik=function(x) log(dpois(4,x)*dpois(6,x)*dpois(7,x)*dpois(6,x)*dpois(5,x)),xrange=c(0,30),parameter="lambda" )
+```
+
+# Task 4
+
+## Biased Coin
+
+```{r}
+logbin2=function(theta){log(dbinom(2,prob=theta,size=6)) + log(dbinom(4,prob=theta,size=10))}
+
+mymaxlikg=function(lfun="logbin2",theta) { 
+nth=length(theta)  
+thmat=matrix(theta,nr=nth,nc=1,byrow=TRUE) 
+z=apply(thmat,1,lfun) 
+zmax=max(which(z==max(z)))  
+plot(theta,exp(z),type="l") 
+abline(v=theta[zmax],col="Blue")   
+axis(3,theta[zmax],round(theta[zmax],4))   
+theta[zmax]   
+}
+mymaxlikg(theta=seq(0,1,length=10000),lfun=logbin2)
+```
+
+### Max Likelihood is 0.375
+
+# Task 5
+
+## $p(y_1,y_2│θ_1 θ_2 )=bin(y_1│θ_1 )poiss(y_2 |θ_2)$
+
+### Algebraic Expression
+
+$l(θ_1,θ_2)=log((ny_1)+y_1log(θ_1)+(n−y_1)log(1−θ_1)−2θ_2+y_2log(θ_2)−log(y_2!)$
+
+```{r}
+logbinpois=function(theta1,theta2) log(dbinom(4,size=20,prob=theta1)) + log(dpois(4,lambda=theta2))
+
+maxlikg2=function(theta1,theta2,lfun="logbinpois",...){
+n1=length(theta1)
+n2=length(theta2)
+z=outer(theta1,theta2,lfun)
+contour(theta1,theta2,exp(z),...) 
+maxl=max(exp(z))    
+coord=which(exp(z)==maxl,arr.ind=TRUE) 
+th1est=theta1[coord[1]] 
+th2est=theta2[coord[2]]
+abline(v=th1est,h=th2est)
+axis(3,th1est,round(th1est,2))
+axis(4,th2est,round(th2est,2),las=1)
+list(th1est=th1est,th2est=th2est)
+}
+maxlikg2(theta1=seq(0,1,length=1000),theta2=seq(0,10,length=1000),nlevels=20)
+```
+
+# Task 6
+
+##  $\hat\mu$ and $\hat\sigma$ when $y=10,12,13,15,12,11,10$ and $Y_i$~$N(\mu,\sigma)$
+
+```{r}
+mymlnorm=function(x,mu,sig,...){  
+nmu=length(mu) 
+nsig=length(sig)
+n=length(x) 
+zz=c()  
+lfun=function(x,m,p) log(dnorm(x,mean=m,sd=p))   
+for(j in 1:nsig){
+z=outer(x,mu,lfun,p=sig[j]) 
+y=apply(z,2,sum)
+zz=cbind(zz,y)
+}
+maxl=max(exp(zz))
+coord=which(exp(zz)==maxl,arr.ind=TRUE)
+maxlsig=apply(zz,1,max)
+contour(mu,sig,exp(zz),las=3,xlab=expression(mu),ylab=expression(sigma),axes=TRUE,
+main=expression(paste("L(",mu,",",sigma,")",sep="")),...)
+mlx=round(mean(x),2)  
+mly=round(sqrt((n-1)/n)*sd(x),2)
+abline(v=mean(x),lwd=2,col="Green")
+abline(h=sqrt((n-1)/n)*sd(x),lwd=2,col="Red")
+
+muest=mu[coord[1]]
+sigest=sig[coord[2]]
+
+abline(v=muest, h=sigest)
+return(list(x=x,coord=coord,maxl=maxl))
+}
+
+mymlnorm(x=c(10,12,13,15,12,11,10),mu=seq(10,15,length=1000),sig=seq(0.1,4,length=1000),lwd=2,labcex=1)
+```
+
+# Task 7
+
+## $sam=rbeta(30,shape1=3,shape2=4)$
+
+```{r}
+mymlbeta=function(x,alpha,beta,...){ 
+na=length(alpha) 
+nb=length(beta)
+n=length(x) 
+zz=c()    
+lfun=function(x,a,b) log(dbeta(x,shape1=a,shape2=b))   
+for(j in 1:nb){
+z=outer(x,alpha,lfun,b=beta[j])
+y=apply(z,2,sum)
+zz=cbind(zz,y)
+}
+maxl=max(exp(zz))    
+coord=which(exp(zz)==maxl,arr.ind=TRUE) 
+aest=alpha[coord[1]] 
+best=beta[coord[2]]
+contour(alpha,beta,exp(zz),las=3,xlab=expression(alpha),ylab=expression(beta),axes=TRUE,
+main=expression(paste("L(",alpha,",",beta,")",sep="")),...)
+
+abline(v=aest, h=best)
+points(aest,best,pch=19)
+axis(4,best,round(best,2),col="Red")
+axis(3,aest,round(aest,2),col="Red")
+return(list(x=x,coord=coord,maxl=maxl,maxalpha=aest,maxbeta=best))
+}
+library(s20x)
+layout(matrix(1:12,nr=3,nc=4,byrow=TRUE))
+z=c()
+a=3
+b=4
+sam= rbeta(30,shape1=a,shape2=b)
+nsam=length(sam)
+for(i in 1:12){
+w=mymlbeta(x=sample(sam,nsam,replace=TRUE),alpha=seq(0.1,20,length=100),beta=seq(0.1,20,length=100),lwd=2,labcex=1,col="steelblue")
+points(a,b,col="Red",pch=19)
+abline(v=a,h=b,col="Red")
+z<-rbind(z,c(w$maxalpha,w$maxbeta))
+ }
+```
+
+```{r}
+colnames(z)=c("alpha","beta")
+z
+```
+
+```{r}
+dz=apply(z-c(a,b),1,function(x) sqrt(sum(x^2)) )
+plot(dz)
+```
+
+# Task 8
+
+```{r}
+MATH4753TRISTAN2023::myNRML(x0=2,delta=0.0001,llik=function(x) log(dpois(4,x)*dpois(6,x)*dpois(7,x)*dpois(6,x)*dpois(5,x)),xrange=c(0,30),parameter="lambda" )
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

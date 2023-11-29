@@ -1,0 +1,442 @@
+---
+title: "Lab9"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: spacelab
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+## Get WD
+
+```{r}
+getwd()
+```
+
+# Task 2
+
+## Line A
+
+Line A is taking sampling with replacement n*iter times. This means that every time something is sampled from the data, it is then replaced before the next sample is taken. 
+
+## Line B
+
+Line B is forming a confidence interval, so we can say with "confidence" that the mean of the values in the xstat vector is between $\alpha/2$ and $1-\alpha/2$.
+
+## Sample
+
+It is important that the sample has equally likely members because the sample is assumed to be representative of the whole population. If there is a sampling bias, it cannot be assumed that the sample is represented.
+
+```{r}
+set.seed(35) # This will give everyone the same sample
+sam=round(rnorm(20,mean=10,sd=4),2)
+
+unique(sample(sam,20,replace=TRUE) ) # repeat this line 5Xs
+unique(sample(sam,20,replace=TRUE) ) # repeat this line 5Xs
+unique(sample(sam,20,replace=TRUE) ) # repeat this line 5Xs
+unique(sample(sam,20,replace=TRUE) ) # repeat this line 5Xs
+unique(sample(sam,20,replace=TRUE) ) # repeat this line 5Xs
+```
+
+I see that they will all have the same sample process from the repeated code, but they will return unique samples each time. They aren't even all the same length.
+
+```{r}
+#sample(sam,21,replace=FALSE)
+```
+
+When I run this code, I get the following message: 
+Error in sample.int(length(x), size, replace, prob) :
+cannot take a sample larger than the population when 'replace = FALSE'
+
+This is because there were only 20 taken from the rnorm function called earler, so when we call for 21, it is larger than the population.
+
+
+# Task 3
+
+## myboot
+
+```{r}
+myboot2<-function(iter=10000,x,fun="mean",alpha=0.05,cx=1.5,...){  #Notice where the ... is repeated in the code
+n=length(x)   #sample size
+
+y=sample(x,n*iter,replace=TRUE)
+rs.mat=matrix(y,nr=n,nc=iter,byrow=TRUE)
+xstat=apply(rs.mat,2,fun) # xstat is a vector and will have iter values in it 
+ci=quantile(xstat,c(alpha/2,1-alpha/2))# Nice way to form a confidence interval
+# A histogram follows
+# The object para will contain the parameters used to make the histogram
+para=hist(xstat,freq=FALSE,las=1,
+main=paste("Histogram of Bootstrap sample statistics","\n","alpha=",alpha," iter=",iter,sep=""),
+...)
+
+#mat will be a matrix that contains the data, this is done so that I can use apply()
+mat=matrix(x,nr=length(x),nc=1,byrow=TRUE)
+
+#pte is the point estimate
+#This uses whatever fun is
+pte=apply(mat,2,fun)
+abline(v=pte,lwd=3,col="Black")# Vertical line
+segments(ci[1],0,ci[2],0,lwd=4)      #Make the segment for the ci
+text(ci[1],0,paste("(",round(ci[1],2),sep=""),col="Red",cex=cx)
+text(ci[2],0,paste(round(ci[2],2),")",sep=""),col="Red",cex=cx)
+
+# plot the point estimate 1/2 way up the density
+text(pte,max(para$density)/2,round(pte,2),cex=cx)
+
+invisible(list(ci=ci,fun=fun,x=x))# Some output to use if necessary
+}
+```
+
+## A, B, C, and D $\alpha=0.05, iter=10000$
+### A
+
+```{r}
+set.seed(39)
+sam=rnorm(25,mean=25,sd=10)
+
+myboot2(x=sam,fun="mean")
+```
+
+
+
+### B
+
+```{r}
+set.seed(30)
+sam=rchisq(20,df=3)
+
+myboot2(x=sam,fun="mean")
+```
+
+### C
+
+```{r}
+set.seed(40)
+sam=rgamma(30,shape=2,scale=3)
+
+myboot2(x=sam,fun="mean")
+```
+
+### D
+
+```{r}
+set.seed(10)
+sam=rbeta(20,shape1=3,shape2=4)
+
+myboot2(x=sam,fun="mean")
+```
+
+
+## A, B, C, and D $\alpha=0.20, iter=10000$
+
+### A
+
+```{r}
+set.seed(39)
+sam=rnorm(25,mean=25,sd=10)
+
+myboot2(alpha=0.20,x=sam,fun="sd")
+```
+
+### B
+
+```{r}
+set.seed(30)
+sam=rchisq(20,df=3)
+
+myboot2(alpha=0.20,x=sam,fun="sd")
+```
+
+### C
+
+```{r}
+set.seed(40)
+sam=rgamma(30,shape=2,scale=3)
+
+myboot2(alpha=0.20,x=sam,fun="sd")
+```
+
+### D
+
+```{r}
+set.seed(10)
+sam=rbeta(20,shape1=3,shape2=4)
+
+myboot2(alpha=0.20,x=sam,fun="sd")
+```
+
+# Task 4
+
+## Modified myboot
+
+```{r}
+myboot3<-function(iter=10000,x,fun="mean",alpha=0.05,cx=1.5,...){  #Notice where the ... is repeated in the code
+n=length(x)   #sample size
+
+y=sample(x,n*iter,replace=TRUE)
+rs.mat=matrix(y,nr=n,nc=iter,byrow=TRUE)
+xstat=apply(rs.mat,2,fun) # xstat is a vector and will have iter values in it 
+ci=quantile(xstat,c(alpha/2,1-alpha/2))# Nice way to form a confidence interval
+# A histogram follows
+# The object para will contain the parameters used to make the histogram
+para=hist(xstat,freq=FALSE,las=1,
+main=paste("Histogram of Bootstrap sample statistics","\n","alpha=",alpha," iter=",iter,sep=""),
+...)
+
+#mat will be a matrix that contains the data, this is done so that I can use apply()
+mat=matrix(x,nr=length(x),nc=1,byrow=TRUE)
+
+#pte is the point estimate
+#This uses whatever fun is
+pte=apply(mat,2,fun)
+abline(v=pte,lwd=3,col="Black")# Vertical line
+segments(ci[1],0,ci[2],0,lwd=4)      #Make the segment for the ci
+text(ci[1],0,paste("(",round(ci[1],2),sep=""),col="Red",cex=cx)
+text(ci[2],0,paste(round(ci[2],2),")",sep=""),col="Red",cex=cx)
+
+# plot the point estimate 1/2 way up the density
+text(pte,max(para$density)/2,round(pte,2),cex=cx)
+
+invisible(list(ci=ci,fun=fun,x=x))# Some output to use if necessary
+
+returnxstat <- xstat[1:30]
+
+barplot(returnxstat)
+
+returnxstat
+}
+```
+
+```{r}
+sam=c(1,1,1,2,2,2,2,3,3,3,4,4) 
+myboot3(x=sam,fun="median")
+```
+
+(L,U) for the median is (1.5,3)
+
+# Task 5
+
+## mean/median
+
+```{r}
+mdm <-function(x,mu,med) {
+  
+  
+  mu = mean(x)
+  med = median(x)
+  
+  mu/med
+}
+set.seed(39)
+sam=rnorm(25,mean=25,sd=10)
+
+mdm(x=sam,mu=25,med=23)
+```
+
+#### $\alpha=0.05$
+
+### A
+
+```{r}
+set.seed(39)
+sam=rnorm(25,mean=25,sd=10)
+
+
+
+myboot3(x=sam,fun="mdm")
+```
+
+### B
+
+```{r}
+set.seed(30)
+sam=rchisq(20,df=3)
+
+myboot3(x=sam,fun="mdm")
+```
+
+### C
+
+```{r}
+set.seed(40)
+sam=rgamma(30,shape=2,scale=3)
+
+myboot3(x=sam,fun="mdm")
+```
+
+### D
+
+```{r}
+set.seed(10)
+sam=rbeta(20,shape1=3,shape2=4)
+
+myboot3(x=sam,fun="mdm")
+```
+
+#### $\alpha=0.3$
+
+### A
+
+```{r}
+set.seed(39)
+sam=rnorm(25,mean=25,sd=10)
+
+
+
+myboot3(alpha=0.3,x=sam,fun="mdm")
+```
+
+### B
+
+```{r}
+set.seed(30)
+sam=rchisq(20,df=3)
+
+myboot3(alpha=0.3,x=sam,fun="mdm")
+```
+
+### C
+
+```{r}
+set.seed(40)
+sam=rgamma(30,shape=2,scale=3)
+
+myboot3(alpha=0.3,x=sam,fun="mdm")
+```
+
+### D
+
+
+```{r}
+set.seed(10)
+sam=rbeta(20,shape1=3,shape2=4)
+
+myboot3(alpha=0.3,x=sam,fun="mdm")
+```
+
+# Task 6
+
+## new distributions
+
+### for mean
+
+```{r}
+sam=rpois(20,lambda = 2)
+
+myboot3(alpha=0.2,x=sam,fun="mean")
+```
+
+```{r}
+sam=rt(20,1,1)
+
+myboot3(alpha=0.2,x=sam,fun="mean")
+```
+
+```{r}
+sam=runif(20,min=0,max=1)
+
+myboot3(alpha=0.2,x=sam,fun="mean")
+```
+
+```{r}
+sam=rweibull(20,shape=2,scale=1)
+
+myboot3(alpha=0.2,x=sam,fun="mean")
+```
+
+### for variance
+
+```{r}
+sam=rpois(20,lambda = 2)
+
+myboot3(alpha=0.2,x=sam,fun="var")
+```
+
+```{r}
+sam=rt(20,1,1)
+
+myboot3(alpha=0.2,x=sam,fun="var")
+```
+
+```{r}
+sam=runif(20,min=0,max=1)
+
+myboot3(alpha=0.2,x=sam,fun="var")
+```
+
+```{r}
+sam=rweibull(20,shape=2,scale=1)
+
+myboot3(alpha=0.2,x=sam,fun="var")
+```
+
+# Task 7
+
+## 2 interesting statisctics
+
+```{r}
+set.seed(68)
+sam=rnorm(20,mean=10,sd=4) 
+
+myboot3(x=sam,fun="IQR")
+```
+
+
+```{r}
+set.seed(68)
+sam=rnorm(20,mean=10,sd=4) 
+
+myboot3(x=sam,fun="quantile")
+```
+
+
+## checking with myboot
+
+```{r}
+set.seed(68)
+sam=rnorm(20,mean=10,sd=4)
+
+myboot3(x=sam)
+```
+
+# Task 8
+
+```{r}
+ddt<-read.csv("DDT.csv")
+MATH4753TRISTAN2023::myboot(x=ddt$DDT)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

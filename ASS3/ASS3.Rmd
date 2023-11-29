@@ -1,0 +1,563 @@
+---
+title: "ASS3"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: spacelab
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 16/16
+
+## 1
+
+```{r}
+round((exp(-120/95)),5)
+```
+
+```{r}
+PHI<-read.csv("PHISHING.csv")
+summary(PHI)
+```
+
+The data does seem to follow an exponential of mean 95. The sample sample mean is equal to 95.524 which is very close to 95.
+
+## 2
+
+```{r}
+3*(0.07)
+```
+Mean = 0.21
+
+```{r}
+3*(0.07^2)
+```
+variance = 00.147
+
+```{r}
+sqrt(0.0147)
+
+.21+3*(0.1212436)
+```
+
+Since 0.60 is outside 3 standard deviations of the mean, the gamma distribution with values a=3 and $\beta$=0.07 does not model the maximum flood value of the river.
+
+
+## 3
+
+### a
+
+```{r}
+2*2
+```
+Mean length of A = 4
+
+```{r}
+1*4
+```
+Mean length of B = 4
+
+### b
+
+```{r}
+2*(2^2)
+```
+Variance of A = 8
+
+```{r}
+1*(4^2)
+```
+Variance of B = 16
+
+### c
+
+#### For A
+
+```{r}
+-0.3033-exp(-.5)+exp(0)
+```
+
+```{r}
+-exp(-.5)
+```
+
+```{r}
+-0.3033-0.6065307+1
+```
+
+#### For B
+
+```{r}
+-exp(-1/4)
+```
+
+```{r}
+exp(0)
+```
+
+```{r}
+1-0.7788008
+```
+
+Formula B has a higher probability of causing a human reaction in less then 1 minute because 0.2211992>0.0901693.
+
+## 4
+
+### a
+
+$F(2)=1-e(-2^2/4)$
+
+```{r}
+1-exp(-2^2/4)
+```
+
+### b
+
+Mean = 1.772454
+
+```{r}
+4^(1)*(gamma(2)-gamma(1.5))
+gamma(2)
+gamma(1.5)*gamma(1.5)
+
+1-0.7853982
+4*(0.2146018)
+sqrt(0.8584072)
+```
+Standard deviation = 0.9265027
+
+
+
+### c
+
+```{r}
+1.772454-2*(0.9265027)
+1.772454+2*(0.9265027)
+
+```
+(-0.0805514,3.625459)
+
+
+
+### d
+
+```{r}
+1-(1-exp(-6^2/4))
+```
+
+
+P(Y>6) = 0.0001234098. This is very small probability, so it is not very likely that Y will exceed 6 years.
+
+
+## 5
+
+### a
+
+E(Y)= a/(a+B)= Mean = 0.1818182
+
+```{r}
+(2)/(2+9)
+```
+
+$\sigma^2= (aB)/(a+B)^2(a+B+1)= Variance = 0.01239669$
+
+```{r}
+(2*9)/((2+9)^2*(2+9+1))
+```
+
+
+
+### b
+
+```{r}
+1-pbeta(.40,2,9)
+```
+
+```{r}
+round(1-pbeta(.40,2,9),4)
+```
+
+
+The probability that any randomly selected year that 40 percent is used to repair the laser color printer = 0.0464.
+
+### c
+
+```{r}
+round(pbeta(.1,2,9),4)
+```
+
+The probability that at most 10 percent of the budget is used to repair the laser color printer = 0.2639.
+
+
+## 6
+
+### a
+
+$\alpha=2$ and $\beta = 16$
+
+
+### b
+
+```{r}
+16^(1/2)
+
+gamma(3/2)
+
+4*(0.8862269)
+```
+
+Mean = 3.544908
+
+```{r}
+16^(2/2)
+
+gamma(2)-(gamma(3/2))^2
+
+16*(0.2146018)
+```
+
+Variance = 3.433629
+
+
+### c
+
+```{r}
+1-pweibull(6,2,4)
+
+round(1-pweibull(6,2,4),4)
+```
+
+The probability a new memory chip will not fail before 6 years = 0.1054.
+
+
+## 7
+
+### a
+
+$p(x,y)= 1/36$ $1=<x=<6,$ $1=<y=<6$
+
+
+### b
+
+$P(X=1)=p_1(1)=1/6$
+
+The same is true for $p_1(2)= p_1(3)…=p_1(6) = 1/6$
+
+The same is also true for $p_2(1)=p_2(2)…=p_2(6)=1/6$
+
+```{r}
+1/36+1/36+1/36+1/36+1/36+1/36
+1/6
+```
+
+### c
+
+$p_1(1|1)= p(1,1)/p_2(1)=1/6$
+
+which is true for for every $p_1(x,y),$ $1=<x=<6,$ $1=<y=<6$
+and $p_2(x,y),$ $1=<x=<6,$ $1=<y=<6$
+
+```{r}
+(1/36)/(1/6)
+1/6
+```
+
+### d
+
+$p_1(x)=p_1(x|y)=1/6$
+
+This shows x and y are independent.
+
+
+## 8
+
+```{r}
+tab <- matrix(c(1,2,3,4,5,6,7,3,1,3,2,3,3,2,1,1,3,1,2,2,1), ncol=3, byrow=FALSE)
+colnames(tab) <- c('Particle ID','Energy Level','Time Period')
+tab <- as.table(tab)
+tab
+```
+
+### a
+
+The probability distribution for the above data is given by the following table where X is columns and Y is the rows.
+
+```{r}
+tab <- matrix(c(1/7,2/7,1/7,0,0,2/7,0,0,1/7), ncol=3, byrow=TRUE)
+colnames(tab) <- c('1','2','3')
+rownames(tab) <- c('1','2','3')
+tab <- as.table(tab)
+addmargins(tab)
+```
+
+  
+### b
+
+The marginal distribution $p_1(x)$ is
+
+```{r}
+tab <- matrix(c(1/7,2/7,4/7), ncol=3, byrow=TRUE)
+colnames(tab) <- c('1','2','3')
+rownames(tab) <- c('p_1(x)')
+tab <- as.table(tab)
+tab
+```
+
+
+$p_1(x=1)=p_1(1)=1/7+0+0= 1/7 p_1(x=2)=p_1(2)=2/7+0+0= 2/7$ $p_1(x=3)p_1(3)=1/7+2/7+1/7= 4/7$
+
+### c
+
+The marginal distribution $p_2(y)$ is
+
+```{r}
+tab <- matrix(c(4/7,2/7,1/7), ncol=3, byrow=TRUE)
+colnames(tab) <- c('1','2','3')
+rownames(tab) <- c('p_2(y)')
+tab <- as.table(tab)
+tab
+```
+
+
+$p_2(y=1)=1/7+2/7+1/7 = 4/7$ $p_2(y=2)=0+0+2/7= 2/7$ $p_2(y=3)=0+0+1/7= 1/7$
+
+### d
+
+Find $p_2(y|x)$ for the data.
+
+x=1
+```{r}
+tab <- matrix(c(1,0,0), ncol=3, byrow=TRUE)
+colnames(tab) <- c('1','2','3')
+rownames(tab) <- c('p_2(y|1)')
+tab <- as.table(tab)
+tab
+```
+x=2
+```{r}
+tab <- matrix(c(2/2,0,0), ncol=3, byrow=TRUE)
+colnames(tab) <- c('1','2','3')
+rownames(tab) <- c('p_2(y|2)')
+tab <- as.table(tab)
+tab
+```
+x=3
+```{r}
+tab <- matrix(c(1/4,2/4,1/4), ncol=3, byrow=TRUE)
+colnames(tab) <- c('1','2','3')
+rownames(tab) <- c('p_2(y|3)')
+tab <- as.table(tab)
+tab
+```
+
+
+$p(y|x=1)|(1/7)(4/7)=1/4| (2/7)/(4/7)=0.5 | (1/7)/(4/7)=0.25 p(y|x=2)| 0 | 0 |$ $(2/7)/(2/7)=1 p(y|x=3)| 0 | 0 | (1/7)/(1/7)=1$
+
+## 9
+
+### a
+
+Integrate out and get $(e^{-y/10}/10$
+
+
+### b
+
+$E(Y)=\mu=\beta=10$
+
+## 10
+
+### a
+
+If we take the double integral of $ce^{-x^2}$ with respect to y and then x, we get:
+
+$c(y)e^{-x^2}$
+
+then we use the bounds for y $(0\le y\le x)$ to get:
+
+$c(x)e^{-x^2} - c(0)e^{-x^2} = c(x)e^{-x^2}$
+
+then we use the bounds for x $(0\le x\le \infty)$ to get:
+
+$-ce^{-x^2}/2$ from 0 to infinity.
+
+Then we plug in the bounds and get (1/2)c=1, so c=2.
+
+The whole z integral is equal to 1 on the interval by definition.
+
+### b
+
+$f_1(x)$ is equal to the integral of $f(x,y)$ with the 2 for c plugged in, thus: 
+
+$f_1(x) = 2xe^{-x^2}$
+
+We then take the integral of $f_1(x)$, using u-substitution, and get the whole thing is equal to 1.
+
+### c
+
+$ f_2(x,y) = f(x,y)/f_1(x)=(2e^{-x^2})/(2xe^{-x^2}) = 1/x$
+
+## 11
+
+$Cov(x,y)=E(XY)−E(X)E(Y)$
+
+$E(XY)=∑_x∑_yxyp(x,y)=0$
+
+$E(x)=∑_xxp_1(x)=0$
+
+$E(y)=∑_yyp_2(y)=0$
+
+Thus $Cov(X,Y)=0$, but $p(x,y)≠p_1(x)∗p_2(y)$. Therefore, X and Y are dependent.
+
+
+## 12
+
+### a
+
+$(a,b)=(1,3)$
+
+$E(Y)=(a+b)/2=2$
+
+$E(Y) = 2$
+
+
+```{r}
+(1+3)/2
+```
+
+### b
+
+$V(Y)=(a+b)/n=0.005555556$
+
+```{r}
+(1/3)/60
+```
+
+
+### c
+
+```{r}
+sqrt(0.005555556)
+
+1-pnorm(2.5,2,0.0745356)
+
+1-pnorm(1.5,2,0.0745356)
+
+1-pnorm(1.5,2,0.0745356)-(1-pnorm(2.5,2,0.0745356))
+```
+
+The probability that $\bar y$ is between 1.5 ppm and 2.5 ppm is 1.
+
+### d
+
+```{r}
+pnorm(2.2,2,0.0745356)
+```
+
+The probability that $\bar y$ exceeds 2.2 ppm is 0.9963548.
+
+## 13
+
+### a
+
+```{r}
+20*(.4)
+```
+
+$\mu = 8$
+
+```{r}
+sqrt(20*(.4)*(.6))
+```
+
+$\sigma = 2.19089$
+
+```{r}
+pnorm(1.5,8,2.19089)
+```
+
+The probability that fewer than 2 of 20 swordfish pieces exceeding the FDA limit is 0.001504432.
+
+
+### b
+
+```{r}
+1-pnorm(10.5,8,2.19089)
+```
+
+The probability that more then half of the 20 pieces of swordfish have mercury levels exceeding the FDA limit is 0.1269165.
+
+### c
+
+```{r}
+pbinom(1,20,.4)
+
+1-pbinom(10,20,.4)
+```
+
+From the values we found in parts a and b the normal normal approximation provides a good estimation of the binomial.
+
+## 14
+
+```{r}
+leadcop<-read.csv("LEADCOPP.csv")
+```
+
+### a
+
+```{r}
+t.test(leadcop$LEAD,conf.level = 0.99)
+```
+
+The mean lead level 99 percent confidence interval is (-1.15,6.92).
+
+### b
+
+```{r}
+t.test(leadcop$COPPER,conf.level = 0.99)
+```
+
+The mean copper level 99 percent confidence interval is (0.1519,0.6647).
+
+### c
+
+Essentially we are 99 percent confident that the mean values for lead and copper levels are found inside the intervals that we found.
+
+### d
+
+99 percent confidence means that in repeated sampling 99 percent of the intervals constructed in the same way will contain the actual mean.
+
+## 15
+
+```{r}
+sol<-read.csv("SOLARAD.csv")
+names(sol)
+with(sol,t.test(STJOS,IOWA,paired=TRUE,conf.level=0.95))
+```
+
+We can be 95 percent confident that the true mean difference of the two locations lies in the interval (156.84,239.18).
+
+## 16
+
+```{r}
+dia<-read.csv("DIAZINON.csv")
+with(dia,t.test(DAY,NIGHT,paired=TRUE,conf.level=0.90))
+```
+
+### a 
+
+We are 90 percent certain the true mean difference lies between -58.894 and -18.92.
+
+### b
+
+We must assume the populations are distributed normally.
+
+### c
+
+Because the confidence interval does not contain zero there is evidence that the mean differs greatly in the day and night compared to one another.

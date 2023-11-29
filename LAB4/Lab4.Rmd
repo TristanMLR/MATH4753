@@ -1,0 +1,351 @@
+---
+title: "Lab 4"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Task 1
+
+## Set Working Directory
+
+```{r}
+getwd()
+```
+
+# Task 2
+
+## Reading in the data
+
+```{r}
+read.csv("SPRUCE.csv")
+spruce.df <- read.csv("SPRUCE.csv")
+tail(spruce.df)
+```
+
+# Task 3
+
+## Plot
+
+```{r}
+library(s20x)
+trendscatter(Height~BHDiameter,f=0.5,data=spruce.df)
+```
+
+## Linear Model
+
+```{r}
+spruce.lm <- with(spruce.df,lm(Height~BHDiameter)) 
+summary(spruce.lm)
+```
+
+## Residuals
+
+```{r}
+height.res <- residuals(spruce.lm)
+```
+
+## Fitted Values
+
+```{r}
+height.fit <- fitted(spruce.lm)
+```
+
+## Plot the residuals vs fitted values
+
+```{r}
+plot(height.fit,height.res)
+```
+
+## Now with trendscatter()
+
+```{r}
+trendscatter(height.fit,height.res)
+```
+
+The shape in the second trendscatter() plot is much more like a quadratic, whereas the first on is like a slightly curved line.
+
+## Residual Plot
+
+```{r}
+plot(spruce.lm, which =1)
+```
+
+## Check Normality
+
+```{r}
+normcheck(spruce.lm,shapiro.wilk = TRUE)
+```
+
+## P-value and Null Hypothesis
+
+The P-value is 0.29. We accept the Null Hypothesis because the P-value is greater than 0.05, meaning that the error has a normal distribution.
+## Evaluation
+
+```{r}
+round(mean(height.res,4))
+```
+
+From the lab 4 sheet, the residuals should be distributed normally and with a mean of 0.
+
+I don't believe a straight line is appropriate for this data set.
+
+# Task 4
+
+## Finding a quadratic
+
+```{r}
+quad.lm <- lm(Height~BHDiameter + I(BHDiameter^2),data=spruce.df)
+summary(quad.lm)
+```
+
+## Fresh Scatter Plot
+
+```{r}
+coef(quad.lm)
+
+plot(spruce.df)
+
+myplot=function(x){
+ quad.lm$coef[1] +quad.lm$coef[2]*x  + quad.lm$coef[3]*x^2
+ } 
+ 
+curve(myplot, lwd=2, col="steelblue",add=TRUE)
+```
+
+## A vector of fitted values
+
+```{r}
+quad.fit <- fitted(quad.lm)
+```
+
+## Plot of the residuals vs fitted values
+
+```{r}
+plot(quad.lm, which=1)
+```
+
+## QQ plot
+
+```{r}
+normcheck(quad.lm,shapiro.wilk = TRUE)
+```
+
+The P-value is 0.684. Since that is higher than 0.05, we accept the null hypothesis. Also, since this P-value is so much higher, there is a much stronger argument for the quadratic than the straight line.
+
+# Task 5
+
+Summary
+
+```{r}
+summary(quad.lm)
+```
+
+## Beta Hat Values
+$β_0$ = 0.860896 , $β_1$ = 1.469592 , $β_2$ = -0.027457
+
+## Interval Estimates
+
+```{r}
+ciReg(quad.lm)
+```
+
+## Equation of a Fitted Line
+
+$Height = 0.860896 + 1.469592x - 0.027457x^2$
+
+## Height Predictions
+
+```{r}
+predict(quad.lm, data.frame(BHDiameter = c(15, 18, 20)))
+```
+
+These predictions are now those of quadratic growth. They are also larger than the previous ones.
+
+# Multiple $R^2$
+
+## quad.lm
+```{r}
+summary(quad.lm)$r.squared
+```
+
+$R^2$ = 0.7741266
+
+## spruce.lm
+
+```{r}
+summary(spruce.lm)$r.squared
+```
+
+$R^2$ = 0.6569146
+
+Adjusted $R^2$
+
+## quad.lm
+
+```{r}
+summary(quad.lm)$adj.r.squared
+```
+
+## spruce.lm
+
+```{r}
+summary(spruce.lm)$adj.r.squared
+```
+
+The adjusted $R^2$ shows how well the data fits depending on the addition of variables. Since quad.lm has a better adjusted $R^2$ value, it models the data more accurately.
+
+## Multiple $R^2$
+
+Multiple $R^2$ just shows how well the model fits the data independently of the addition of variables.
+
+## Variability in height
+
+quad.lm explains the most variability in height because both its $R^2$ and adjusted $R^2$ are higher.
+
+# Anova
+
+```{r}
+anova(quad.lm)
+```
+```{r}
+anova(spruce.lm)
+```
+```{r}
+anova(quad.lm, spruce.lm)
+```
+
+quad.lm is better at modeling the data because it has a lower RSS, meaning it closer fits the data.
+
+# TSS, MSS, RSS, MSS/TSS
+
+```{r}
+height.qfit <- fitted(quad.lm)
+```
+
+## TSS
+
+```{r}
+TSS <- with(spruce.df, sum((Height - mean(Height)) ^ 2))
+TSS
+```
+
+## MSS
+
+```{r}
+MSS <- with(spruce.df, sum((height.qfit - mean(Height)) ^ 2))
+MSS
+```
+
+## RSS
+
+```{r}
+RSS <- with(spruce.df, sum((Height - height.qfit) ^ 2))
+RSS
+```
+
+## MSS/TSS
+
+```{r}
+MSS/TSS
+```
+
+# Task 6
+
+## Cooks plot
+
+```{r}
+cooks20x(quad.lm, main = "Cooks Distance Plot for quad.lm")
+```
+
+Cooks distance is used to detect which data points may be outliers. The plot shows how much each data point affects the regression by illustrating the difference it would make if it were removed.
+
+## Cooks distance for quad.lm
+
+Cooks Distance Plot for quad.lm shows that the 24th entry has the biggest affect on the model.
+
+# quad2.lm and its summary
+
+```{r}
+quad2.lm <- lm(Height~BHDiameter + I(BHDiameter^2),data=spruce.df[-24,])
+summary(quad2.lm)
+```
+
+# Comparing quad2.lm to quad.lm
+
+quad2.lm has larger $R^2$ and Adjusted $R^2$ values than quad.lm.
+
+quad2.lm also has larger min, max, and median residuals.
+
+This means that the 24th data point was definitely impacting the model, thus Cooks Distance Plot was correct.
+
+# Task 7
+
+## Prove using latex that $y=β_0+β_1 x+β_2$ $(x-x_k )I(x>x_k)$ where $I()$ is 1 when $x>x_k$ and 0 else.
+
+### We have two lines with the point $x_k$ in common.
+### $l_1 : y = β_0 + β_1x$
+### $l_2 : y = β_0 + δ + (β_1 + β_2)x$
+### Next, we plug in the point $x_k$ and set the equations equal to each other because of their shared point.
+### $y_k = β_0 + β_1x_k = β_0 + δ + (β_1 + β_2)x_k$
+### Distribute $x_k$ on the right hand side.
+### $β_0 + β_1x = β_0 + δ + β_1x_k + β_2x_k$
+### Notice, $β_0$ and $β_1x$ cancel, so
+### $0 = δ + β_2x_k$
+### Then,
+### $δ = -β_2x_k$
+### Going back to $l_2$ for any x,
+### $l_2 : y = β_0 + δ + (β_1 + β_2)x$
+### Substitute $δ = -β_2x_k$.
+### $l_2 : y = β_0 - β_2x_k + (β_1 + β_2)x$
+### Distribute x
+### $l_2 : y = β_0 - β_2x_k + β_1x + β_2x$
+### Rearrange,
+### $l_2 : y = β_0  + β_1x + β_2x - β_2x_k$
+### Factor out $β_2$
+### $l_2 : y = β_0  + β_1x + β_2(x - x_k)$
+### We now have a formula that describes $l_2$ as an adjustment of $l_1$.
+### We can use an indicator function to allow our function to know where it should and should not include the adjustment.
+### Where $I()$ is 1 if $x > x_k$ and 0 else.
+
+## Reproducing the Plot
+
+```{r}
+sp2.df <- within(spruce.df, X <- (BHDiameter - 18) * (BHDiameter > 18))
+sp2.df
+
+lmp <- lm(Height~BHDiameter + X,data=sp2.df)
+tmp <- summary(lmp)
+names(tmp)
+
+myf = function(x,coef){
+  coef[1]+coef[2]*(x) + coef[3]*(x-18)*(x-18>0)
+}
+plot(spruce.df,main="Piecewise regression")
+myf(0, coef=tmp$coefficients[,"Estimate"])
+
+curve(myf(x,coef=tmp$coefficients[,"Estimate"] ),add=TRUE, lwd=2,col="Blue")
+abline(v=18)
+text(18,16,paste("R sq.=",round(tmp$r.squared,4) ))
+```
+
+# Task 8
+
+```{r}
+MATH4753TRISTAN2023::myplot(1:10)
+```
+
+This function is a function from earlier in the lab that creates a quadratic using the variable x. The form of said quadratic in this function is $0.86089580 +1.46959217*x  -0.02745726*x^2$.
+
+
+
+
+
+
+
+

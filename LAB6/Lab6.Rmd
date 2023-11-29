@@ -1,0 +1,303 @@
+---
+title: "Lab 6"
+author: "Tristan LaRose"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: spacelab
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+## Get WD
+
+```{r}
+getwd()
+```
+
+# Task 2
+
+## Normal
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+
+layout.show(4)
+
+curve(dnorm(x, mean=10,sd=4),xlim=c(-10,30))
+
+curve(dnorm(x, mean=10,sd=2),xlim=c(-10,30))
+
+curve(dnorm(x, mean=5,sd=10),xlim=c(-10,30))
+
+curve(dnorm(x, mean=5,sd=0.5),xlim=c(-10,30))
+```
+
+```{r}
+curve(dnorm(x, mean=0,sd=1),xlim=c(-10,30))
+
+xcurve1=seq(2,1002,length=1000)
+
+ycurve1=dnorm(xcurve1,mean=0,sd=1)
+
+polygon(c(2,xcurve1,1002),c(0,ycurve1,0),col="Red")
+
+prob1=1-pnorm(2,mean=0,sd=1)
+prob1=round(prob1,4)
+
+text(20, 0.1, paste("Area = ", prob1, sep=""))
+```
+
+```{r}
+curve(dnorm(x, mean=4,sd=2),xlim=c(-10,30))
+
+xcurve2=seq(1,5,length=1000)
+
+ycurve2=dnorm(xcurve2,mean=4,sd=2)
+
+polygon(c(1,xcurve2,5),c(0,ycurve2,0),col="Red")
+
+prob2=pnorm(5,mean=4,sd=2)-pnorm(1,mean=4,sd=2)
+prob2=round(prob2,4)
+
+text(20, 0.1, paste("Area = ", prob2, sep=""))
+```
+
+```{r}
+curve(dnorm(x, mean=10,sd=4),xlim=c(-10,30))
+
+xcurve3=seq(-990,10,length=1000)
+
+ycurve3=dnorm(xcurve3,mean=10,sd=4)
+
+polygon(c(-990,xcurve3,10),c(0,ycurve3,0),col="Red")
+
+prob3=pnorm(10,mean=10,sd=4)
+prob3=round(prob3,4)
+
+text(20, 0.1, paste("Area = ", prob3, sep=""))
+```
+
+```{r}
+curve(dnorm(x, mean=-2,sd=.5),xlim=c(-10,30))
+
+xcurve4=seq(-3,-2,length=1000)
+
+ycurve4=dnorm(xcurve4,mean=-2,sd=.5)
+
+polygon(c(-3,xcurve4,-2),c(0,ycurve4,0),col="Red")
+
+prob4=pnorm(-2,mean=-2,sd=.5)-pnorm(-3,mean=-2,sd=.5)
+prob4=round(prob4,4)
+
+text(20, 0.1, paste("Area = ", prob4, sep=""))
+```
+
+# Task 3
+
+## Gamma 
+
+```{r}
+curve(dgamma(x,shape=1,scale=1),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2,
+ylab="Gamma density", main="Beta=1")
+text(1,0.8,paste("alpha=",1))
+curve(dgamma(x,shape=3,scale=1),xlim=c(0,10),ylim=c(0,1),add=TRUE,lwd=2)
+text(2,0.3,paste("alpha=",3))
+curve(dgamma(x,shape=5,scale=1),xlim=c(0,10),ylim=c(0,1),add=TRUE, col="Blue",lwd=2)
+text(8,0.2,paste("alpha=",5))
+```
+
+```{r}
+curve(dgamma(x,shape=3,scale=2),xlim=c(0,10),ylim=c(0,0.2),col="Red",lwd=2,
+ylab="Gamma density", main="Beta=1")
+text(1,0.8,paste("alpha=",1))
+
+prob5=pgamma(5,shape=3,scale=2)-pgamma(2,shape=3,scale=2)
+prob5=round(prob5,4)
+text(4, 0.15, paste("Area = ", prob5, sep=""))
+
+curve(dgamma(x,shape=6,scale=3),xlim=c(0,10),ylim=c(0,0.2),add=TRUE,lwd=2)
+text(2,0.3,paste("alpha=",3))
+
+prob6=pgamma(4,shape=3,scale=2)-pgamma(1,shape=3,scale=2)
+prob6=round(prob6,4)
+text(8, 0.05, paste("Area = ", prob6, sep=""))
+
+curve(dgamma(x,shape=2,scale=4),xlim=c(0,10),ylim=c(0,0.2),add=TRUE, col="Blue",lwd=2)
+text(8,0.2,paste("alpha=",5))
+
+prob7=pgamma(6,shape=3,scale=2)-pgamma(3,shape=3,scale=2)
+prob7=round(prob7,4)
+text(4, 0.015, paste("Area = ", prob7, sep=""))
+
+```
+
+# Task 4
+
+## Chi-Squared
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+
+layout.show(4)
+
+curve(dchisq(x,df=1),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2,
+ylab="Chisq density")
+
+curve(dchisq(x,df=2),xlim=c(0,10),ylim=c(0,1),col="Blue",lwd=2,
+ylab="Chisq density")
+
+curve(dchisq(x,df=4),xlim=c(0,10),ylim=c(0,1),col="Green",lwd=2,
+ylab="Chisq density")
+
+curve(dchisq(x,df=20),xlim=c(0,10),ylim=c(0,1),col="Black",lwd=2,
+ylab="Chisq density")
+```
+
+```{r}
+curve(dchisq(x,df=2),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2,
+ylab="Chisq density", main="df=2")
+
+prob8=pchisq(4,df=2)-pchisq(2,df=2)
+prob8=round(prob8,4)
+text(4, 0.8, paste("Area = ", prob8, sep=""))
+```
+
+```{r}
+curve(dchisq(x,df=3),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2,
+ylab="Chisq density", main="df=2")
+
+prob9=pchisq(5,df=3)-pchisq(3,df=3)
+prob9=round(prob9,4)
+text(4, 0.8, paste("Area = ", prob9, sep=""))
+```
+
+```{r}
+curve(dchisq(x,df=20),xlim=c(0,21),ylim=c(0,1),col="Red",lwd=2,
+ylab="Chisq density", main="df=2")
+
+prob10=pchisq(21,df=20)-pchisq(10,df=20)
+prob10=round(prob10,4)
+text(4, 0.8, paste("Area = ", prob10, sep=""))
+```
+
+# Task 5
+
+## Weibull
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+
+layout.show(4)
+
+curve(dweibull(x,shape=3,scale=2),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2)
+
+curve(dweibull(x,shape=4,scale=5),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2)
+
+curve(dweibull(x,shape=5,scale=3),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2)
+
+curve(dweibull(x,shape=2,scale=1),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2)
+```
+
+```{r}
+curve(dweibull(x,shape=3,scale=2),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2, main="Weibull")
+
+prob11=pweibull(3,shape=3,scale=2)
+prob11=round(prob11,2)
+text(4, 0.8, paste("Area = ", prob11, sep=""))
+```
+
+```{r}
+curve(dweibull(x,shape=5,scale=3),xlim=c(0,10),ylim=c(0,1),col="Red",lwd=2, main="Weibull")
+
+prob12=pweibull(4,shape=5,scale=3)-pweibull(2,shape=5,scale=3)
+prob12=round(prob12,4)
+text(4, 0.8, paste("Area = ", prob12, sep=""))
+```
+
+```{r}
+curve(dweibull(x,shape=4,scale=1),xlim=c(0,10),ylim=c(0,1.5),col="Red",lwd=2, main="Weibull")
+
+prob13=pweibull(4,shape=4,scale=1)-pweibull(1,shape=4,scale=1)
+prob13=round(prob13,4)
+text(4, 0.8, paste("Area = ", prob13, sep=""))
+```
+
+# Task 6
+
+## Beta
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+
+layout.show(4)
+
+curve(dbeta(x,shape1=1,shape2=3),xlim=c(0,1))
+
+curve(dbeta(x,shape1=2,shape2=3),xlim=c(0,1))
+
+curve(dbeta(x,shape1=3,shape2=3),xlim=c(0,1))
+
+curve(dbeta(x,shape1=2,shape2=2),xlim=c(0,1))
+```
+
+```{r}
+curve(dbeta(x,shape1=2,shape2=2),xlim=c(0,1),col="Red",lwd=2, main="Beta")
+
+prob14=dbeta(0.7,shape1=2,shape2=2)
+prob14=round(prob14,2)
+text(0.5, 0.5, paste("Area = ", prob14, sep=""))
+```
+
+```{r}
+curve(dbeta(x,shape1=3,shape2=1),xlim=c(0,1),col="Red",lwd=2, main="Beta")
+
+prob15=dbeta(0.7,shape1=3,shape2=2)-dbeta(0.2,shape1=3,shape2=2)
+prob15=round(prob15,2)
+text(0.5, 0.5, paste("Area = ", prob15, sep=""))
+```
+
+```{r}
+curve(dbeta(x,shape1=1,shape2=2),xlim=c(0,1),col="Red",lwd=2, main="Beta")
+
+prob15=dbeta(0.7,shape1=1,shape2=2)
+prob15=round(prob15,2)
+text(0.5, 0.5, paste("Area = ", prob15, sep=""))
+```
+
+# Task 7
+
+## myncurve()
+
+```{r}
+MATH4753TRISTAN2023::myncurve(mu=10,sigma=5)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
